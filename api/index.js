@@ -8,6 +8,7 @@ import authRouter from './routes/authRoute.js'
 import cookieParser from "cookie-parser";
 import dataa from "./models/dataSchema.js";
 import DefaultData from "./defaultdata.js";
+import path from "path";
 import cors from 'cors'
 
 const app= express();
@@ -29,12 +30,21 @@ mongoose.connect(DB).then(() => {
   }); 
 
 
+const __dirname = path.resolve();
+
+
 app.listen(5000, () =>{
     console.log('Server is running on port 5000')
 });
 
 app.use('/api/user',userRouter)
 app.use('/api/auth',authRouter)
+
+
+app.use(express.static(path.join(__dirname, '/client/dist')));
+app.get('*',(req, res)=>{
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+})
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
